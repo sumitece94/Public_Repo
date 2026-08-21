@@ -1,0 +1,6 @@
+---
+- name: Install OpenVPN on Ubuntu EC2
+  hosts: vpn
+  become: true
+  roles:
+    - openvpn

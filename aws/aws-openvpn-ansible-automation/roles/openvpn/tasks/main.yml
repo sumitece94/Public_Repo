@@ -1,0 +1,22 @@
+---
+- name: Update apt cache
+  ansible.builtin.apt:
+    update_cache: true
+    cache_valid_time: 3600
+
+- name: Install OpenVPN packages
+  ansible.builtin.apt:
+    name:
+      - openvpn
+      - openssl
+      - easy-rsa
+      - ufw
+    state: present
+
+- name: Create OpenVPN server directory
+  ansible.builtin.file:
+    path: /etc/openvpn/server
+    state: directory
+    owner: root
+    group: root
+    mode: "0700"

@@ -1,0 +1,6 @@
+---
+- name: Apply Ubuntu VPN security baseline
+  hosts: vpn
+  become: true
+  roles:
+    - security

@@ -1,0 +1,40 @@
+---
+- name: Validate OpenVPN deployment
+  hosts: vpn
+  become: true
+  tasks:
+    - name: Check OpenVPN service
+      ansible.builtin.systemd:
+        name: openvpn-server@server
+      register: openvpn_service
+
+    - name: Show service state
+      ansible.builtin.debug:
+        msg: "OpenVPN state: {{ openvpn_service.status.ActiveState }}"
+
+    - name: Check IPv4 forwarding
+      ansible.builtin.command: sysctl -n net.ipv4.ip_forward
+      register: forwarding
+      changed_when: false
+
+    - name: Show forwarding
+      ansible.builtin.debug:
+        msg: "IPv4 forwarding: {{ forwarding.stdout }}"
+
+    - name: Check listening sockets
+      ansible.builtin.command: ss -lun
+      register: sockets
+      changed_when: false
+
+    - name: Show sockets
+      ansible.builtin.debug:
+        var: sockets.stdout_lines
+
+    - name: Check UFW
+      ansible.builtin.command: ufw status verbose
+      register: firewall
+      changed_when: false
+
+    - name: Show firewall
+      ansible.builtin.debug:
+        var: firewall.stdout_lines

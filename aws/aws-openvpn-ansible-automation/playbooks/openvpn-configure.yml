@@ -1,0 +1,32 @@
+---
+- name: Configure OpenVPN
+  hosts: vpn
+  become: true
+  tasks:
+    - name: Deploy OpenVPN configuration
+      ansible.builtin.template:
+        src: ../roles/openvpn/templates/server.conf.j2
+        dest: /etc/openvpn/server/server.conf
+        owner: root
+        group: root
+        mode: "0600"
+      notify: Restart OpenVPN
+
+    - name: Enable IPv4 forwarding
+      ansible.posix.sysctl:
+        name: net.ipv4.ip_forward
+        value: "1"
+        state: present
+        reload: true
+
+    - name: Enable OpenVPN service
+      ansible.builtin.systemd:
+        name: openvpn-server@server
+        enabled: true
+        state: started
+
+  handlers:
+    - name: Restart OpenVPN
+      ansible.builtin.systemd:
+        name: openvpn-server@server
+        state: restarted
