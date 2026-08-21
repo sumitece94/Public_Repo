@@ -1,0 +1,36 @@
+#cloud-config
+
+# Baseline configuration for a MAAS-managed Ubuntu lab node.
+
+package_update: true
+package_upgrade: true
+
+packages:
+  - curl
+  - wget
+  - git
+  - vim
+  - htop
+  - jq
+  - net-tools
+
+timezone: Asia/Kolkata
+
+write_files:
+  - path: /etc/motd
+    permissions: "0644"
+    content: |
+      Ubuntu MAAS Managed Node
+      Provisioned through MAAS cloud-init
+
+  - path: /opt/maas-operations/provisioning-info.txt
+    permissions: "0644"
+    content: |
+      Node provisioned using Ubuntu MAAS.
+      This file is for lab validation.
+
+runcmd:
+  - systemctl enable ssh
+  - systemctl restart ssh
+  - mkdir -p /opt/maas-operations
+  - touch /opt/maas-operations/provisioned
